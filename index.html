@@ -2,98 +2,59 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>LUMINA NEXUS | Management OS</title>
+    <title>LUMINA NEXUS | Secure Access</title>
     <style>
-        :root { --gold: #FFD700; --bg: #050505; --card: #0d0d0d; --border: #222; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; display: flex; height: 100vh; }
+        :root { --gold: #FFD700; --bg: #050505; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
         
-        /* Yan Menü */
-        .sidebar { width: 280px; background: var(--card); border-right: 1px solid var(--border); padding: 25px; display: flex; flex-direction: column; }
-        .logo { font-weight: bold; letter-spacing: 5px; color: var(--gold); border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 30px; }
+        /* Giriş Ekranı (Gate) */
+        #access-gate { text-align: center; background: #0d0d0d; padding: 50px; border-radius: 20px; border: 1px solid #222; box-shadow: 0 0 50px rgba(0,0,0,1); transition: 0.5s; }
+        .ls-logo { font-size: 3rem; font-weight: bold; letter-spacing: 10px; color: var(--gold); margin-bottom: 20px; }
+        input { background: #1a1a1a; border: 1px solid #333; color: white; padding: 15px; border-radius: 8px; width: 250px; text-align: center; font-size: 1.1rem; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(255,215,0,0.2); }
+        .btn-enter { background: var(--gold); color: black; border: none; padding: 15px 40px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 20px; text-transform: uppercase; }
         
-        /* Terminal Bölgesi */
-        .main-content { flex: 1; padding: 30px; display: flex; flex-direction: column; gap: 20px; }
-        .terminal-box { background: black; border-radius: 10px; padding: 20px; flex: 1; border: 1px solid var(--gold); font-family: 'Courier New', monospace; overflow-y: auto; color: #0f0; }
-        
-        /* Kontrol Paneli */
-        .control-panel { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
-        .btn { background: var(--gold); color: black; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        input { background: #1a1a1a; border: 1px solid var(--border); color: white; padding: 10px; border-radius: 5px; margin-right: 10px; }
-
-        .ceo-only { border: 1px dashed var(--gold); padding: 15px; margin-top: 20px; border-radius: 8px; }
-        .worker-list { list-style: none; padding: 0; }
-        .worker-item { display: flex; justify-content: space-between; padding: 10px; background: #111; margin-bottom: 5px; border-radius: 4px; border-left: 3px solid var(--gold); }
+        /* Ana Sistem (Başlangıçta Gizli) */
+        #nexus-main { display: none; width: 100%; height: 100vh; flex-direction: row; }
+        /* ... Eski CSS yapıları buraya dahil edilecek ... */
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="logo">LUMINA NEXUS</div>
-        <p style="font-size: 0.8rem; color: #888;">STATUS: CONNECTED TO WEB</p>
-        <div id="worker-count" style="margin-top: 20px;">Aktif Personel: 0</div>
-        <ul id="worker-list-display" class="worker-list" style="margin-top: 15px; font-size: 0.85rem;"></ul>
+    <div id="access-gate">
+        <div class="ls-logo">LUMINA NEXUS</div>
+        <p style="color: #666; font-size: 0.8rem; margin-bottom: 30px;">KİMLİK DOĞRULAMASI GEREKLİ</p>
+        <input type="password" id="master-key" placeholder="CEO ERIŞIM ANAHTARI">
+        <br>
+        <button class="btn-enter" onclick="validateAccess()">Sisteme Gir</button>
+        <p id="error-msg" style="color: #ff4444; font-size: 0.8rem; margin-top: 15px; display: none;">YETKİSİZ ERİŞİM: KİMLİK DOĞRULANAMADI</p>
     </div>
 
-    <div class="main-content">
-        <div class="terminal-box" id="nexus-terminal">
-            <div>[SİSTEM] Lumina Nexus v2.0 Başlatıldı...</div>
-            <div>[SİSTEM] Web sitesi veritabanı ile senkronizasyon kuruldu.</div>
-            <div>[GÜVENLİK] CEO Yetkisi Gerekli.</div>
-        </div>
-
-        <div class="control-panel">
-            <h3 style="margin-top:0;">CEO Yönetim Paneli (Arel Ö.)</h3>
-            <div class="ceo-only">
-                <input type="password" id="ceo-pass" placeholder="Yetki Şifresi">
-                <input type="text" id="worker-name" placeholder="Personel Adı">
-                <button class="btn" onclick="modifyWorker('add')">EKLE</button>
-                <button class="btn" style="background: #ff4444;" onclick="modifyWorker('remove')">KALDIR</button>
-            </div>
-        </div>
+    <div id="nexus-main">
+        <h1 style="color:var(--gold); padding: 20px;">Hoş Geldiniz Sayın CEO Arel Ö.</h1>
     </div>
 
     <script>
-        let workers = [];
-        const terminal = document.getElementById('nexus-terminal');
-        const CEO_PASS = "A+190788";
+        const KEY = "A+190788";
 
-        function log(msg, color = "#0f0") {
-            const time = new Date().toLocaleTimeString();
-            terminal.innerHTML += `<div style="color: ${color}">[${time}] > ${msg}</div>`;
-            terminal.scrollTop = terminal.scrollHeight;
-        }
+        function validateAccess() {
+            const input = document.getElementById('master-key').value;
+            const gate = document.getElementById('access-gate');
+            const main = document.getElementById('nexus-main');
+            const error = document.getElementById('error-msg');
 
-        function modifyWorker(action) {
-            const pass = document.getElementById('ceo-pass').value;
-            const name = document.getElementById('worker-name').value;
-
-            if (pass !== CEO_PASS) {
-                log("HATA: YETKİSİZ ERİŞİM DENEMESİ! CEO ŞİFRESİ HATALI.", "#ff4444");
-                return;
-            }
-
-            if (!name) return alert("İsim giriniz.");
-
-            if (action === 'add') {
-                workers.push(name);
-                log(`PERSONEL EKLENDİ: ${name} (Web Entegrasyonu Tamamlandı)`);
+            if(input === KEY) {
+                gate.style.opacity = "0";
+                setTimeout(() => {
+                    gate.style.display = "none";
+                    main.style.display = "flex";
+                    // Terminal başlatma fonksiyonları buraya
+                }, 500);
             } else {
-                workers = workers.filter(w => w !== name);
-                log(`PERSONEL SİSTEMDEN ÇIKARTILDI: ${name}`, "#ff4444");
+                error.style.display = "block";
+                document.getElementById('master-key').value = "";
+                // Hatalı giriş logunu gizlice sunucuya gönder (Opsiyonel)
             }
-
-            updateUI();
-            document.getElementById('worker-name').value = "";
-        }
-
-        function updateUI() {
-            const list = document.getElementById('worker-list-display');
-            const count = document.getElementById('worker-count');
-            list.innerHTML = workers.map(w => `<li class="worker-item">${w} <span>ONLINE</span></li>`).join('');
-            count.innerText = `Aktif Personel: ${workers.length}`;
-            
-            // Web sitesi ile ilişkilendirme (Simülasyon)
-            log("Veritabanı güncellendi: https://lumina-studios.com/api/nexus/sync");
         }
     </script>
 </body>
