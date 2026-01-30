@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>LUMINA NEXUS | Core OS v1.0</title>
+    <style>
+        :root { --nexus-gold: #FFD700; --nexus-bg: #020202; --nexus-panel: #0a0a0a; }
+        body { background: var(--nexus-bg); color: white; font-family: 'Orbitron', sans-serif; margin: 0; overflow: hidden; }
+        
+        /* Nexus Başlatıcı Ekranı */
+        #nexus-init { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: radial-gradient(circle, #111 0%, #000 100%); }
+        .nexus-loader { width: 50px; height: 50px; border: 3px solid var(--nexus-gold); border-top: 3px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; }
+        
+        /* Terminal Arayüzü */
+        #nexus-interface { display: none; padding: 20px; height: 100vh; grid-template-columns: 300px 1fr; gap: 20px; }
+        .sidebar { background: var(--nexus-panel); border-right: 2px solid var(--nexus-gold); padding: 20px; }
+        .main-view { background: rgba(255,215,0,0.02); border: 1px solid #222; border-radius: 15px; padding: 30px; position: relative; }
+        
+        .status-tag { color: var(--nexus-gold); font-size: 0.8rem; letter-spacing: 2px; }
+        .cmd-line { font-family: 'Courier New', monospace; color: #0f0; margin: 10px 0; }
+        
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="nexus-init">
+        <div class="nexus-loader"></div>
+        <h1 style="letter-spacing: 15px; margin-top: 20px;">LUMINA NEXUS</h1>
+        <p class="status-tag">SİSTEM ÇEKİRDEĞİ YÜKLENİYOR...</p>
+    </div>
+
+    <div id="nexus-interface">
+        <div class="sidebar">
+            <h3 style="color: var(--nexus-gold);">NEXUS NODE-01</h3>
+            <p style="font-size: 0.7rem; color: #666;">CEO: AREL Ö.</p>
+            <hr border-color="#222">
+            <nav>
+                <p style="cursor:pointer" onclick="log('Güvenlik Duvarı Aktif')">🛡️ Güvenlik Katmanı</p>
+                <p style="cursor:pointer" onclick="log('Neura Yerel Mod Seçildi')">🧠 Neura Local Bridge</p>
+                <p style="cursor:pointer" onclick="log('Veri Sızıntısı Taraması Başlatıldı')">🛰️ Sızıntı Analizi</p>
+            </nav>
+        </div>
+        <div class="main-view">
+            <div class="status-tag">CANLI SİSTEM LOGLARI</div>
+            <div id="terminal" style="margin-top:20px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Başlatma Sekansı
+        setTimeout(() => {
+            document.getElementById('nexus-init').style.display = 'none';
+            document.getElementById('nexus-interface').style.display = 'grid';
+            log("Lumina Nexus Core v1.0.0 başlatıldı.");
+            log("Bağlantı Türü: Kapalı Devre (Internal Only)");
+            log("Yönetici Onayı Alındı: AREL Ö.");
+        }, 3000);
+
+        function log(msg) {
+            const t = document.getElementById('terminal');
+            const now = new Date().toLocaleTimeString();
+            t.innerHTML += `<div class="cmd-line">[${now}] > ${msg}</div>`;
+            t.scrollTop = t.scrollHeight;
+        }
+    </script>
+</body>
+</html>
